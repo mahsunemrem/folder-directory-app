@@ -1,10 +1,10 @@
 <template>
-  <h1 @click="path =''" class="cursor">Root</h1>
+  <h2 @click="path =''" class="cursor">Root</h2>
 
   <div>
     <div v-for="folder in folderTree" :key="folder.id" class="col-md-8">
     <FolderComponent 
-    @publish-path="path = $event"     
+    @publish-path="path = $event"
       :folder="folder"
       indent=0
     />

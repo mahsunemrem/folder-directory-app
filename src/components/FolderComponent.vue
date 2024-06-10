@@ -1,27 +1,30 @@
 <template>
   {{ "&nbsp;".repeat(indent) }}
-  <span @click="openFolder" class="cursor">
-    <template v-if="show">
-      <i class="fa-solid fa-chevron-down"></i> &nbsp;
-      <i class="fa-solid fa-folder-open"></i>
-    </template>
-
-    <template v-else>
-      <i class="fa-solid fa-chevron-right"></i> &nbsp;
-      <i class="fa-solid fa-folder"></i>
-    </template>
+  <span :class="{ cursor: true, active: folder.id == getSelectedFolder }">
+    <span v-if="show">
+      <i @click="openFolder(true)" class="fa-solid fa-chevron-down"></i> &nbsp;
+    </span>
+    <span v-else>
+      <i @click="openFolder(true)" class="fa-solid fa-chevron-right"></i> &nbsp;
+    </span>
     &nbsp;
-    <b>{{ folder.name }}</b>
+    <span @click="openFolder(false)"><i v-if="show" class="fa-solid fa-folder-open"></i> <i v-else class="fa-solid fa-folder-open"></i> <b>{{ folder.name }}</b></span>    
   </span>
   <br />
   <div v-show="show">
     <template v-for="childFolder in folder.children" :key="childFolder.id">
-      <ChildNode @publish-path="publishPathToParent" :folder="childFolder" :indent="Number(indent) + 12" />
+      <ChildNode
+        @publish-path="publishPathToParent"
+        :folder="childFolder"
+        :indent="Number(indent) + 12"
+      />
     </template>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
   name: "ChildNode",
   data: function () {
@@ -29,17 +32,25 @@ export default {
       show: false,
     };
   },
+  computed: mapGetters(["getSelectedFolder"]),
   methods: {
-    openFolder(){
-      this.show = !this.show;
+    openFolder(showOption) {
+      if(showOption == false && this.show == false){
+        this.show = !this.show;
+      }else if(showOption == true){
+        this.show = !this.show; 
+      }
+      
 
       var self = this;
-      this.$emit('publishPath', self.folder.name)
+      this.$emit("publishPath", self.folder.name);
+      this.setSelectedFolder(self.folder.id);
     },
-    publishPathToParent(path){
+    publishPathToParent(path) {
       var self = this;
-      this.$emit('publishPath', self.folder.name+"/"+path)
-    }
+      this.$emit("publishPath", self.folder.name + "/" + path);
+    },
+    ...mapMutations(["setSelectedFolder"]),
   },
   props: {
     folder: Object,
@@ -51,5 +62,9 @@ export default {
 <style>
 .cursor:hover {
   cursor: pointer;
+}
+
+.active {
+  background-color: rgb(0, 102, 255);
 }
 </style>
