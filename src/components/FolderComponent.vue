@@ -8,7 +8,11 @@
       <i @click="openFolder(true)" class="fa-solid fa-chevron-right"></i> &nbsp;
     </span>
     &nbsp;
-    <span @click="openFolder(false)"><i v-if="show" class="fa-solid fa-folder-open"></i> <i v-else class="fa-solid fa-folder-open"></i> <b>{{ folder.name }}</b></span>    
+    <span @click="openFolder(false)"
+      ><i v-if="show" class="fa-solid fa-folder-open"></i>
+      <i v-else class="fa-solid fa-folder-open"></i>
+      <b>{{ folder.name }}</b></span
+    >
   </span>
   <br />
   <div v-show="show">
@@ -23,8 +27,6 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
-
 export default {
   name: "ChildNode",
   data: function () {
@@ -32,25 +34,28 @@ export default {
       show: false,
     };
   },
-  computed: mapGetters(["getSelectedFolder"]),
+  computed: {
+    getSelectedFolder() {
+      return this.$store.getters["folder/getSelectedFolder"];
+    },
+  },
   methods: {
     openFolder(showOption) {
-      if(showOption == false && this.show == false){
+      if (showOption == false && this.show == false) {
         this.show = !this.show;
-      }else if(showOption == true){
-        this.show = !this.show; 
+      } else if (showOption == true) {
+        this.show = !this.show;
       }
-      
 
       var self = this;
       this.$emit("publishPath", self.folder.name);
-      this.setSelectedFolder(self.folder.id);
+
+      this.$store.commit("folder/setSelectedFolder", self.folder.id);
     },
     publishPathToParent(path) {
       var self = this;
       this.$emit("publishPath", self.folder.name + "/" + path);
     },
-    ...mapMutations(["setSelectedFolder"]),
   },
   props: {
     folder: Object,

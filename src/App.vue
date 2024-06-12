@@ -15,6 +15,9 @@
         <FileList />
       </div>
     </div>
+    <div class="row">
+      <FileComponent/>
+    </div>
   </div>
 </template>
 
@@ -22,6 +25,7 @@
 import FolderList from "./components/FolderList.vue";
 import FileList from "./components/FileList.vue";
 import SearchInput from "./components/SearchInput.vue";
+import FileComponent from "./components/FilComponent.vue";
 
 export default {
   name: "App",
@@ -29,6 +33,7 @@ export default {
     FolderList,
     FileList,
     SearchInput,
+    FileComponent
   },
 };
 </script>

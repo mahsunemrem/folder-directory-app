@@ -2,30 +2,39 @@
   <h2>Files</h2>
   <div>
     <ul class="list-group">
-      <li v-for="file in filteredFiles" :key="file.id" class="list-group-item"><i class="fa-solid fa-file-lines"></i> {{ file.name }}</li>
+      <button
+        v-for="file in filteredFiles"
+        :key="file.id"
+        @click="setSelectedFile(file)"
+        :class="{ active: selectedFile?.id == file.id }"
+        type="button"
+        class="list-group-item list-group-item-action"
+        aria-current="true"
+      >
+        <i class="fa-solid fa-file-lines"></i> {{ file.name }}
+      </button>
     </ul>
   </div>
 </template>
 
-<script>
-import { mapGetters } from 'vuex';
+<script setup>
+import { useStore } from "vuex";
+import { computed } from 'vue';
 
-import files from "../utils/files.js";
 
-export default {
-  data: function () {
-    return {
-      files,
-    };
-  },
-  computed:{
-    filteredFiles(){
-        return this.files.filter(x => x.folderId == this.getSelectedFolder);
-    },
-    ...mapGetters(["getSelectedFolder"])
-  }
-};
+const store = useStore();
+
+const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
+const getSelectedFolder = computed(() => store.getters["folder/getSelectedFolder"]);
+
+const filteredFiles = computed(() => store.getters["file/getFilesWithFolderId"](getSelectedFolder.value));
+
+const setSelectedFile = (selectedFile) =>
+  store.commit("file/setSelectedFile", selectedFile);
+
 </script>
+
+
 
 <style>
 </style>

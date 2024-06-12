@@ -1,26 +1,12 @@
-// store/index.js
 import { createStore } from 'vuex';
 
+import fileModule from './modules/file';
+import folderModule from './modules/folder';
+
 const store = createStore({
-  state() {
-    return {
-      selectedFolder: '-1'
-    };
-  },
-  mutations: {
-    setSelectedFolder(state, newValue) {
-      state.selectedFolder = newValue;
-    }
-  },
-  actions: {
-    updateSelectedFolder({ commit }, newValue) {
-      commit('setSelectedFolder', newValue);
-    }
-  },
-  getters: {
-    getSelectedFolder: (state) => {
-      return state.selectedFolder;
-    }
+  modules: {
+    file: fileModule,
+    folder: folderModule
   }
 });
 

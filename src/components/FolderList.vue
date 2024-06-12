@@ -24,14 +24,16 @@
 
 <script>
 import { ref, computed } from 'vue';
-
+import { useStore } from "vuex";
 import FolderComponent from "./FolderComponent.vue";
-import folders from "../utils/root.js";
-import buildTree from "../utils/buildTree.js";
 
 export default {
   setup(){
-    const folderTree = ref(buildTree(folders));
+    
+    const store = useStore();
+
+    const folderTree = computed(() => store.getters["folder/getFolderTree"]);
+
     const path = ref("");
     const fileName = ref("");
 

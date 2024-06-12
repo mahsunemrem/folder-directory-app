@@ -7,61 +7,50 @@
       aria-label="Search..."
       aria-describedby="basic-addon2"
       v-model="inputValue"
-      @input="handleInput"
+      @keyup="setSelectedFile(null)"
     />
     <span class="input-group-text" id="basic-addon2">
       <i class="fa-brands fa-searchengin"></i>
     </span>
-
-    <div class="spinner-border" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
-    <span class="spinner-border spinner-border-sm" aria-hidden="true" v-if="isLoading"></span>
   </div>
+  <hr />
+  <ul class="list-group">
+    <button
+      v-for="file in files"
+      :key="file.id"
+      @click="setSelectedFile(file)"
+      :class="{ active: selectedFile?.id == file.id }"
+      type="button"
+      class="list-group-item list-group-item-action"
+      aria-current="true"
+    >
+      <i class="fa-solid fa-file-lines"></i> {{ file.name }}
+    </button>
+  </ul>
+  <hr />
 
-  <template>
-  <div>
-    <!-- Button -->
-    <button type="button" class="btn btn-primary" @click="openModal">Popup Aç</button>
-    
-    <!-- Modal -->
-    <div class="modal" tabindex="-1" role="dialog" :aria-labelledby="modalTitle" aria-hidden="true" ref="myModal">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{{ modalTitle }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>Modal içeriği buraya gelecek.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-            <button type="button" class="btn btn-primary">Kaydet</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
 </template>
 
+<script setup>
+import { useStore } from "vuex";
+import { ref, onMounted, computed } from "vue";
 
-<script>
-export default {
-  data() {
-    return {
-      inputValue: "",
-      isLoading: false,
-    };
-  },
-  methods: {
-    handleInput() {
-     
-    },
-  },
-};
+const inputValue = ref("");
+
+const store = useStore();
+
+onMounted(() => {
+  store.dispatch("file/loadFiles");
+});
+
+const files = computed(() => store.getters["file/getFiles"](inputValue.value));
+
+const setSelectedFile = (selectedFile) =>
+  store.commit("file/setSelectedFile", selectedFile);
+
+const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
 </script>
+
 
 <style>
 </style>
