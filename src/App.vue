@@ -25,7 +25,7 @@
 import FolderList from "./components/FolderList.vue";
 import FileList from "./components/FileList.vue";
 import SearchInput from "./components/SearchInput.vue";
-import FileComponent from "./components/FilComponent.vue";
+import FileComponent from "./components/FileComponent.vue";
 
 export default {
   name: "App",
