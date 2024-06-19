@@ -32,6 +32,7 @@ export default {
   data: function () {
     return {
       show: false,
+      
     };
   },
   computed: {
