@@ -1,4 +1,5 @@
-import fileList from '../../utils/files'
+import fileList from '../../../utils/files'
+import * as types from './mutation-types'
 
 const fileModule = {
   namespaced: true,
@@ -7,16 +8,16 @@ const fileModule = {
     selectedFile: null
   },
   mutations: {
-    setFiles(state, files) {
+    [types.SET_FILES](state, files) {
       state.files = files;
     },
-    setSelectedFile(state, file) {
+    [types.SET_SELECTED_FILES](state, file) {
       state.selectedFile = file;
     }
   },
   actions: {
     loadFiles({ commit }) {
-      commit('setFiles', fileList)
+      commit(types.SET_FILES, fileList)
     }
   },
   getters: {
@@ -29,7 +30,6 @@ const fileModule = {
     },
     getSelectedFile: (state) => state.selectedFile,
     getFilesWithFolderId: (state) => (folderId) => {
-      console.log("girdi")
       if (!folderId) {
         return [];
       }

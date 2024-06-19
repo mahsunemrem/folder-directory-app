@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 
-import fileModule from './modules/file';
-import folderModule from './modules/folder';
+import fileModule from './modules/file/file';
+import folderModule from './modules/folder/folder';
 
 const store = createStore({
   modules: {

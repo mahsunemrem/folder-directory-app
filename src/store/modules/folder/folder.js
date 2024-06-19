@@ -1,20 +1,21 @@
-import buildTree from "../../utils/buildTree.js";
-import folders from "../../utils/folders.js";
+import buildTree from "../../../utils/buildTree.js";
+import folders from "../../../utils/folders.js";
+import { SET_SELECTED_FOLDER } from './mutation-types'
 
 const folderModule = {
   namespaced: true,
   state: {
     selectedFolder: '-1',
-    fodlerTree:buildTree(folders)
+    fodlerTree: buildTree(folders)
   },
   mutations: {
-    setSelectedFolder(state, newValue) {
+    [SET_SELECTED_FOLDER](state, newValue) {
       state.selectedFolder = newValue;
     }
   },
   actions: {
     updateSelectedFolder({ commit }, newValue) {
-      commit('setSelectedFolder', newValue);
+      commit(SET_SELECTED_FOLDER, newValue);
     }
   },
   getters: {
