@@ -21,11 +21,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import FolderComponent from "./FolderComponent.vue";
 
 const store = useStore();
+
+onMounted(async () => {
+  await store.dispatch("folder/loadFolders");
+});
 
 const folderTree = computed(() => store.getters["folder/getFolderTree"]);
 

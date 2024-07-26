@@ -1,5 +1,5 @@
-import fileList from '../../../utils/files'
 import * as types from './mutation-types'
+import file from '@/services/entities/file'
 
 const fileModule = {
   namespaced: true,
@@ -16,8 +16,9 @@ const fileModule = {
     }
   },
   actions: {
-    loadFiles({ commit }) {
-      commit(types.SET_FILES, fileList)
+    async loadFiles({ commit }) {
+      var files = await file.getAll();
+      commit(types.SET_FILES, files)
     }
   },
   getters: {

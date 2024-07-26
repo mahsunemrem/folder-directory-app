@@ -39,8 +39,8 @@ const inputValue = ref("");
 
 const store = useStore();
 
-onMounted(() => {
-  store.dispatch("file/loadFiles");
+onMounted(async () => {
+  await store.dispatch("file/loadFiles");
 });
 
 const files = computed(() => store.getters["file/getFiles"](inputValue.value));

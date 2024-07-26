@@ -1,27 +1,36 @@
 import buildTree from "../../../utils/buildTree.js";
-import folders from "../../../utils/folders.js";
-import { SET_SELECTED_FOLDER } from './mutation-types'
+import folder from '@/services/entities/folder'
+import { SET_SELECTED_FOLDER, SET_FOLDERS } from './mutation-types'
 
 const folderModule = {
   namespaced: true,
   state: {
     selectedFolder: '-1',
-    fodlerTree: buildTree(folders)
+    folderTree: []
   },
   mutations: {
-    [SET_SELECTED_FOLDER](state, newValue) {
-      state.selectedFolder = newValue;
+    [SET_SELECTED_FOLDER](state, selectedFolder) {
+      state.selectedFolder = selectedFolder;
+    },
+    [SET_FOLDERS](state, folders) {
+      state.folderTree = folders;
     }
   },
   actions: {
     updateSelectedFolder({ commit }, newValue) {
       commit(SET_SELECTED_FOLDER, newValue);
+    },
+    async loadFolders({commit}){
+
+      var folders = await folder.getAll();
+      var folderTree = buildTree(folders)
+
+      commit(SET_FOLDERS, folderTree);
     }
   },
   getters: {
     getSelectedFolder: (state) => state.selectedFolder,
-    getFolderTree: (state) => state.fodlerTree
-  }
-};
+    getFolderTree: (state) => state.folderTree
+}};
 
 export default folderModule;

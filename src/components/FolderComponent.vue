@@ -27,6 +27,7 @@
 </template>
 
 <script>
+
 export default {
   name: "ChildNode",
   data: function () {
@@ -61,7 +62,7 @@ export default {
   props: {
     folder: Object,
     indent: Number,
-  },
+  }
 };
 </script>
 
