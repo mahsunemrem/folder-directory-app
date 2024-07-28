@@ -19,19 +19,22 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed } from 'vue';
+import { computed, watch  } from 'vue';
 
 
 const store = useStore();
 
 const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
-const getSelectedFolder = computed(() => store.getters["folder/getSelectedFolder"]);
+const selectedFolder = computed(() => store.getters["folder/getSelectedFolder"]);
 
-const filteredFiles = computed(() => store.getters["file/getFilesWithFolderId"](getSelectedFolder.value));
+watch(selectedFolder, async (newFolderId) => {
+  await store.dispatch("file/getFilesByFolderId", newFolderId);
+})
 
-const setSelectedFile = (selectedFile) =>
-  store.commit("file/setSelectedFile", selectedFile);
+const filteredFiles = computed(() => store.getters["file/getFilesByFolderId"]);
 
+const setSelectedFile = async (selectedFile) =>
+  await store.dispatch("file/getFileById", selectedFile.id);
 </script>
 
 

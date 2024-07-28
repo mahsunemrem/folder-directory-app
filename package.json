@@ -8,11 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-vue": "^6.0.0",
     "axios": "^1.7.2",
+    "ckeditor5": "^42.0.2",
     "core-js": "^3.8.3",
     "sweetalert": "^2.1.2",
     "sweetalert2": "^11.12.3",
     "vue": "^3.2.13",
+    "vue-router": "^4.4.0",
     "vuex": "^4.0.2"
   },
   "devDependencies": {

@@ -33,15 +33,15 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { ref, onMounted, computed } from "vue";
+import { ref, computed } from "vue";
 
 const inputValue = ref("");
 
 const store = useStore();
 
-onMounted(async () => {
-  await store.dispatch("file/loadFiles");
-});
+// onMounted(async () => {
+//   await store.dispatch("file/loadFiles");
+// });
 
 const files = computed(() => store.getters["file/getFiles"](inputValue.value));
 

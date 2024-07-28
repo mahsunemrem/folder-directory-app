@@ -1,41 +1,91 @@
 <template>
-  <div class="p-3" v-if="selectedFile != null">
-    <div class="d-flex justify-content-start">
-      <b><i class="fa-solid fa-house"></i> a/b/c/3</b>
-    </div>
-    <hr />
-    <div v-if="loading" class="d-flex justify-content-center p-5">
-      <div class="spinner-grow  text-danger" role="status">
-        <span class="visually-hidden">Loading...</span>
+  <div class="container">
+    <form class="mt-3">
+      <div class="row">
+        <div class="col">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" />
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label"
+              >Folder</label
+            >
+            <select class="form-select" aria-label="Default select example">
+              <option selected>Open this select menu</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select>
+          </div>
+        </div>
       </div>
-    </div>
-    <div v-else class="container">
-      <div v-html="selectedFile?.content">
-
+      <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Contet</label>
+        <ckeditor :editor="editor" v-model="editorData" :config="editorConfig"></ckeditor>
       </div>
-      <hr>
-      <FileComment/>
-    </div>    
+      <button type="submit" class="btn btn-primary float-end">Submit</button>
+    </form>
   </div>
 </template>
 
-<script setup>
-import { useStore } from "vuex";
-import { ref, computed, watch } from "vue";
-import FileComment from "./FileComment.vue";
+<script>
 
-const store = useStore();
+import CKEditor from '@ckeditor/ckeditor5-vue';
+  import {
+    ClassicEditor,
+    Bold,
+    Essentials,
+    Heading,
+    Indent,
+    IndentBlock,
+    Italic,
+    Link,
+    List,
+    MediaEmbed,
+    Paragraph,
+    Table,
+    Undo
+  } from 'ckeditor5';
 
-const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
+  import 'ckeditor5/ckeditor5.css';
 
-const loading = ref(false);
-
-watch(selectedFile, () => {
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-  }, 1000); // 1 saniye bekleme süresi
-});
+  export default {
+    name: 'app',
+    components: {
+      ckeditor: CKEditor.component
+    },
+    data() {
+      return {
+        editor: ClassicEditor,
+        editorData: '',
+        editorConfig: {
+          toolbar: [
+            'undo', 'redo', '|',
+            'heading', '|', 'bold', 'italic', '|',
+            'link', 'insertTable', '|',
+            'bulletedList', 'numberedList', 'indent', 'outdent'
+          ],
+          plugins: [
+            Bold,
+            Essentials,
+            Heading,
+            Indent,
+            IndentBlock,
+            Italic,
+            Link,
+            List,
+            MediaEmbed,
+            Paragraph,
+            Table,
+            Undo
+          ],
+        }
+      };
+    }
+  }
 </script>
 
 <style>

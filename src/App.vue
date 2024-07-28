@@ -1,40 +1,55 @@
 <template>
+   
   <div class="container border">
-    <h1>Folder Structure</h1>
-    <hr />
-    <div class="row justify-content-center m-3">
-      <div class="col-lg-6">
-        <SearchInput />
-      </div>
+    <div>
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarTogglerDemo03"
+            aria-controls="navbarTogglerDemo03"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <router-link :to="{ name: 'home'}" class="navbar-brand">WİKİ</router-link>
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <router-link :to="{ name: 'file'}" class="nav-link"><i class="fa-solid fa-file-circle-plus"></i></router-link>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <button class="btn btn-outline-success" type="submit">
+                Search
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
     </div>
-    <div class="row">
-      <div class="col border">
-        <FolderList />
-      </div>
-      <div class="col border">
-        <FileList />
-      </div>
-    </div>
-    <div class="row">
-      <FileComponent/>
+    <div>
+      <router-view></router-view>      
     </div>
   </div>
 </template>
 
 <script>
-import FolderList from "./components/FolderList.vue";
-import FileList from "./components/FileList.vue";
-import SearchInput from "./components/SearchInput.vue";
-import FileComponent from "./components/FileComponent.vue";
 
 export default {
-  name: "App",
-  components: {
-    FolderList,
-    FileList,
-    SearchInput,
-    FileComponent
-  },
+  name: "App"
 };
 </script>
 
@@ -47,4 +62,5 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
 </style>

@@ -1,24 +1,30 @@
 import * as types from './mutation-types'
-import file from '@/services/entities/file'
+import fileService from '@/services/entities/fileService'
 
 const fileModule = {
   namespaced: true,
   state: {
-    files: [],
+    filesByFolderId: [],
     selectedFile: null
   },
   mutations: {
-    [types.SET_FILES](state, files) {
-      state.files = files;
+    [types.SET_FILES_BY_FOLDER_ID](state, files) {
+      state.filesByFolderId = files;
     },
-    [types.SET_SELECTED_FILES](state, file) {
+    [types.SET_SELECTED_FILE](state, file) {
       state.selectedFile = file;
     }
   },
   actions: {
-    async loadFiles({ commit }) {
-      var files = await file.getAll();
-      commit(types.SET_FILES, files)
+    async getFilesByFolderId({ commit }, folderId) {
+      var files = await fileService.getFilesByFolderId(folderId);
+
+      commit(types.SET_FILES_BY_FOLDER_ID, files)
+    },
+    async getFileById({ commit }, fileId) {
+      var file = await fileService.getById(fileId);
+
+      commit(types.SET_SELECTED_FILE, file)
     }
   },
   getters: {
@@ -30,13 +36,7 @@ const fileModule = {
       return state.files.filter(x => x.name.includes(fileName));
     },
     getSelectedFile: (state) => state.selectedFile,
-    getFilesWithFolderId: (state) => (folderId) => {
-      if (!folderId) {
-        return [];
-      }
-
-      return state.files.filter(x => x.folderId == folderId)
-    }
+    getFilesByFolderId: (state) => state.filesByFolderId
   }
 };
 

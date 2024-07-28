@@ -1,5 +1,5 @@
 import buildTree from "../../../utils/buildTree.js";
-import folder from '@/services/entities/folder'
+import folderService from '@/services/entities/folderService'
 import { SET_SELECTED_FOLDER, SET_FOLDERS } from './mutation-types'
 
 const folderModule = {
@@ -22,7 +22,7 @@ const folderModule = {
     },
     async loadFolders({commit}){
 
-      var folders = await folder.getAll();
+      var folders = await folderService.getAll();
       var folderTree = buildTree(folders)
 
       commit(SET_FOLDERS, folderTree);
