@@ -4,7 +4,7 @@ import commentService from '@/services/entities/commentService';
 const comment = {
   namespaced: true,
   state: {
-    commentsByFileId: [],
+    commentsByFileId: null,
   },
   mutations: {
     [types.SET_COMMENTS_BY_FILE_ID](state, comments) {
@@ -18,37 +18,8 @@ const comment = {
     },
   },
   getters: {
-    getCommentsByFileId: (state) => (fileId) => state.commentsByFileId[fileId] || [],
+    comments: (state) => state.commentsByFileId,
   },
 };
 
  export default comment;
-// import * as types from './mutation-types';
-// import commentService from '@/services/entities/commentService';
-
-// const commentModule = {
-//   namespaced: true,
-//   state: {
-//     comments: []
-//   },
-//   mutations: {
-//     [types.SET_COMMENTS](state, comments) {
-//       state.comments = comments;
-//     }
-//   },
-//   actions: {
-//     async fetchComments({ commit }, fileId) {
-//       try {
-//         const comments = await commentService.getCommentsByFileId(fileId);
-//         commit(types.SET_COMMENTS, comments);
-//       } catch (error) {
-//         console.error("Failed to fetch comments:", error);
-//       }
-//     }
-//   },
-//   getters: {
-//     allComments: (state) => state.comments
-//   }
-// };
-
-// export default commentModule;

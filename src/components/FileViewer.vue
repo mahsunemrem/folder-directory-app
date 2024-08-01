@@ -14,28 +14,29 @@
 
       </div>
       <hr>
-      <FileComment/>
+      <FileComment />
     </div>    
   </div>
 </template>
 
 <script setup>
 import { useStore } from "vuex";
-import { ref, computed, watch } from "vue";
-import FileComment from "./FileComment.vue";
+import { ref, computed } from "vue";
+import FileComment from "@/components/FileComment.vue";
 
 const store = useStore();
 
 const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
-
+console.log("selectedFile.value")
+console.log(selectedFile.value);
 const loading = ref(false);
 
-watch(selectedFile, () => {
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-  }, 1000); // 1 saniye bekleme süresi
-});
+// watch(selectedFile, () => {
+//   loading.value = true;
+//   setTimeout(() => {
+//     loading.value = false;
+//   }, 1000); // 1 saniye bekleme süresi
+// });
 </script>
 
 <style>

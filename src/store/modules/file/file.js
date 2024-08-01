@@ -23,7 +23,6 @@ const fileModule = {
     },
     async getFileById({ commit }, fileId) {
       var file = await fileService.getById(fileId);
-
       commit(types.SET_SELECTED_FILE, file)
     }
   },

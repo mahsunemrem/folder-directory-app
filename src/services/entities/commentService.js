@@ -4,7 +4,7 @@ import toast from '@/plugins/sweetalert';
 export default {
   async getCommentsByFileId(fileId) {
     try {
-      const response = await axios.get(`/comments/files/${fileId}`);
+      const response = await axios.get(`/files/${fileId}/comments`);
       return response.data;
     } catch (error) {
       toast.error("Bir Hata oluştu", error.message);

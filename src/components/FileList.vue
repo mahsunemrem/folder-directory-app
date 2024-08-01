@@ -33,11 +33,12 @@ watch(selectedFolder, async (newFolderId) => {
 
 const filteredFiles = computed(() => store.getters["file/getFilesByFolderId"]);
 
-const setSelectedFile = async (selectedFile) =>
-  await store.dispatch("file/getFileById", selectedFile.id);
+
+
+const setSelectedFile = async (selectedFile) => await store.dispatch("file/getFileById", selectedFile.id);
+
+
 </script>
-
-
 
 <style>
 </style>

@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="text-start">
-      <b></b>
+      <b>{{ selectedFile }}</b>
     </div>
-<!--   
+  
       <div v-for="comment in comments" :key="comment.id" class="card d-flex my-3">
         <div class="card-header">
           <span class="float-start">
@@ -19,7 +19,7 @@
           </blockquote>
         </div>
       </div>
-     -->
+    
   
   </div>
 </template>
@@ -31,21 +31,13 @@ import { computed, watch } from "vue";
 
 const store = useStore();
 
+const selectedFileId = computed(() => store.getters["file/getSelectedFile"]?.id);
 
-const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
+watch(selectedFileId , async (newFileId) => {
+  await store.dispatch("comment/getCommentsByFileId", newFileId);
+},  { immediate: true });
 
-watch(selectedFile, () => {
- console.error('watchh')
- // await store.dispatch("comment/getCommentsByFileId", newFileId);
-})
-
-//const comments = computed(() => store.getters["comment/commentsByFileId"]);
-
-
-
+const comments = computed(() => store.getters["comment/comments"]);
 
 
 </script>
-
-<style scoped>
-</style>
