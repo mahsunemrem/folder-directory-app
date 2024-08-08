@@ -19,4 +19,12 @@ export default {
       toast.error("Bir Hata oluştu", error.message);
     }
   },
+  async addFile(fileData) {
+    const response = await axios.post('/files', fileData);
+    return response.data;
+  },
+  async fileDelete(fileId){
+    const response = await axios.delete('/files',fileId);
+    return response.data;
+  }
 };

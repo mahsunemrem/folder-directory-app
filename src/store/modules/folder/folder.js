@@ -26,7 +26,9 @@ const folderModule = {
       var folderTree = buildTree(folders)
 
       commit(SET_FOLDERS, folderTree);
-    }
+    },
+   
+    
   },
   getters: {
     getSelectedFolder: (state) => state.selectedFolder,

@@ -21,5 +21,12 @@ const Toast = Swal.mixin({
       }); 
   }
 
-  export default {error};
+  function success(title, text){
+    Toast.fire({
+        icon: "success",
+        title: title,
+        text:text
+      }); 
+  }
+  export default {error,success};
 
