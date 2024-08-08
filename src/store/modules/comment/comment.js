@@ -23,9 +23,11 @@ const comment = {
       const comments = await commentService.getCommentsByFileId(fileId);
       commit(types.SET_COMMENTS_BY_FILE_ID, comments);
     },
-    async addComment({ commit }, {  commentData }) {
-      const newComment = await commentService.addComment( commentData);
-      commit(types.ADD_COMMENT, newComment);
+    async addComment({dispatch} , commentModel) {
+      console.log(commentModel)
+      await commentService.addComment( commentModel);
+
+      await dispatch('getCommentsByFileId', commentModel.fileId);
     },
   },
   getters: {

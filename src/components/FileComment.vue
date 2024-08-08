@@ -74,9 +74,14 @@ const shrinkTextarea = (event) => {
 
 const addComment = async () => {
   if (newCommentContent.value.trim()) {
-    await store.dispatch("comment/addComment", { 
-      commentData: { content: newCommentContent.value, authorName: authorName.value , fileId:fileId.value }
-    });
+    var commentModel = { 
+      content: newCommentContent.value, 
+      authorName: authorName.value , 
+      fileId:fileId.value 
+    };
+
+    await store.dispatch("comment/addComment", commentModel);
+    
     newCommentContent.value = "";
     authorName.value = "";
   } else {

@@ -17,9 +17,6 @@ const fileModule = {
     [types.ADD_FILE](state, file) { 
       state.filesByFolderId.push(file);
     },
-    [types.DELETE_FILE](state, fileId) {
-      state.filesByFolderId = state.filesByFolderId.filter(file => file.id !== fileId);
-    },
   },
   actions: {
     async getFilesByFolderId({ commit }, folderId) {
@@ -31,17 +28,16 @@ const fileModule = {
       var file = await fileService.getById(fileId);
       commit(types.SET_SELECTED_FILE, file)
     },
-    async addFile({ commit }, fileData) { // New action
-      const newFile = await fileService.addFile(fileData);
-      commit(types.ADD_FILE, newFile);
+    async addFile(_, fileModel) { // New action
+      await fileService.addFile(fileModel);
     },
-    async fileDelete({ commit }, fileId) {
-      try {
-        await fileService.fileDelete(fileId);
-        commit(types.DELETE_FILE, fileId);
-      } catch (error) {
-        console.error('Error deleting file:', error);
-      }
+    async fileDelete({ getters, dispatch }, fileId) {
+      await fileService.fileDelete(fileId);
+
+      var selectedFolderId = getters["folder/getSelectedFolder"];
+      console.log(selectedFolderId)
+
+      await dispatch('getFilesByFolderId', )
     }
   },
   getters: {

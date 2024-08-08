@@ -7,22 +7,27 @@
             <label class="form-label">Name</label>
             <input type="text" class="form-control" v-model="name" required />
           </div>
-          <div class="mb-3">
-            <label class="form-label">İçerik</label>
-            <input type="text" class="form-control" v-model="content" required />
-          </div>
         </div>
-      
         <div class="col">
           <div class="mb-3">
             <label class="form-label">Folder</label>
             <select class="form-select" v-model="folderId" required>
-              <option v-for="folder in folders" :key="folder.id" :value="folder.id">
-  {{ folder.name }}
-</option>
+              <option
+                v-for="folder in folders"
+                :key="folder.id"
+                :value="folder.id"
+              >
+                {{ folder.name }}
+              </option>
             </select>
             <p>Selected Folder ID: {{ folderId }}</p>
           </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="mb-3">
+          <label class="form-label">İçerik</label>
+          <ckeditor v-model="content" :editor="editor" :config="editorConfig" />
         </div>
       </div>
       <button type="submit" class="btn btn-primary float-end">Submit</button>
@@ -31,61 +36,98 @@
 </template>
 
 <script>
-// import CKEditor from '@ckeditor/ckeditor5-vue';
-import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { ClassicEditor, Bold, Essentials, Heading, Indent, IndentBlock, Italic, Link, List, MediaEmbed, Paragraph, Table, Undo } from 'ckeditor5';
+import { ref, onMounted } from "vue";
+import { useStore } from "vuex";
+
+import CKEditor from "@ckeditor/ckeditor5-vue";
+import {
+  ClassicEditor,
+  Bold,
+  Essentials,
+  Heading,
+  Indent,
+  IndentBlock,
+  Italic,
+  Link,
+  List,
+  MediaEmbed,
+  Paragraph,
+  Table,
+  Undo,
+} from "ckeditor5";
+
+import "ckeditor5/ckeditor5.css";
 
 export default {
-  name: 'FileUpload',
+  name: "FileUpload",
   setup() {
     const store = useStore();
 
-    const name = ref('');
-    const content = ref('');
+    const name = ref("");
+    const content = ref("buraya içeriği giriniz!");
     const folders = ref([]);
     const folderId = ref(null);
-    const editorData = ref('');
-    const editor = ClassicEditor;
-    const editorConfig = {
+
+    const editor = ref(ClassicEditor);
+    const editorConfig = ref({
       toolbar: [
-        'undo', 'redo', '|',
-        'heading', '|', 'bold', 'italic', '|',
-        'link', 'insertTable', '|',
-        'bulletedList', 'numberedList', 'indent', 'outdent',
+        "undo",
+        "redo",
+        "|",
+        "heading",
+        "|",
+        "bold",
+        "italic",
+        "|",
+        "link",
+        "insertTable",
+        "|",
+        "bulletedList",
+        "numberedList",
+        "indent",
+        "outdent",
       ],
       plugins: [
-        Bold, Essentials, Heading, Indent, IndentBlock, Italic, Link, List, MediaEmbed, Paragraph, Table, Undo,
+        Bold,
+        Essentials,
+        Heading,
+        Indent,
+        IndentBlock,
+        Italic,
+        Link,
+        List,
+        MediaEmbed,
+        Paragraph,
+        Table,
+        Undo,
       ],
-    };
+    });
 
     const submitFile = async () => {
       try {
-        const fileData = {
+        const fileModel = {
           name: name.value,
           folderId: folderId.value,
-          content: content.value
+          content: content.value,
         };
 
-        await store.dispatch('file/addFile', fileData);
-        name.value = '';
+        await store.dispatch("file/addFile", fileModel);
+        name.value = "";
         folderId.value = null;
-        content.value = '';
+        content.value = "";
       } catch (error) {
-        console.error('File submission failed', error);
+        console.error("File submission failed", error);
       }
     };
 
     const fetchFolders = async () => {
-  try {
-    await store.dispatch("folder/loadFolders");
-    folders.value = store.getters["folder/getFolderTree"];
-  } catch (error) {
-    console.error('Failed to fetch folders', error);
-  }
-};
-
-
+      try {
+        await store.dispatch("folder/loadFolders");
+        folders.value = store.getters["folder/getFolderTree"];
+      } catch (error) {
+        console.error("Failed to fetch folders", error);
+      }
+    };
 
     onMounted(() => {
       fetchFolders();
@@ -96,11 +138,20 @@ export default {
       content,
       folderId,
       folders,
-      editorData,
       editor,
       editorConfig,
       submitFile,
     };
   },
+  components: {
+    ckeditor: CKEditor.component,
+  },
 };
 </script>
+
+
+<style>
+.ck-editor__editable {
+  min-height: 500px;
+}
+</style>

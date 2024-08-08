@@ -11,9 +11,9 @@ export default {
       toast.error("Bir Hata oluştu", error.message);
     }
   },
-  async addComment( commentData) {
+  async addComment( commentModel) {
     try {
-      const response = await axios.post(`/comments`, commentData);
+      const response = await axios.post(`/comments`, commentModel);
       toast.success("Yorum Eklendi.");
       return response.data;
     } catch (error) {
