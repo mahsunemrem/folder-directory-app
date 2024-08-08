@@ -36,8 +36,8 @@ const fileModule = {
 
       var selectedFolderId = getters["folder/getSelectedFolder"];
       console.log(selectedFolderId)
-
-      await dispatch('getFilesByFolderId', )
+      // burada dosya silindikten sonra, seçili olan klasörün dosyalarını tekrardan çağır. yani getSelectedFolder getters'i ile seçili olan klasörün id'sini al ve yukarıdaki get filesbyFolderId actionuına göndererek o actionu tetikle. otomatik dosya listesi güncellenenecek. Çünkü arrayde senin sildiğin dosyayı kaldırmak kolay. Ancak aynı anda başka kullanıcı işlem yaptıysa bunu görmen lazım!
+      await dispatch('getFilesByFolderId', selectedFolderId)
     }
   },
   getters: {
