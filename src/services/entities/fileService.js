@@ -24,7 +24,7 @@ export default {
     return response.data;
   },
   async fileDelete(fileId){
-    const response = await axios.delete('/files',fileId);
+    const response = await axios.delete(`/files/${fileId}`);
     return response.data;
   }
 };
