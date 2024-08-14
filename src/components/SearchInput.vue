@@ -16,7 +16,7 @@
   <hr />
   <ul class="list-group">
     <button
-      v-for="file in files"
+      v-for="file in filteredFiles"
       :key="file.id"
       @click="setSelectedFile(file)"
       :class="{ active: selectedFile?.id == file.id }"
@@ -28,7 +28,6 @@
     </button>
   </ul>
   <hr />
-
 </template>
 
 <script setup>
@@ -39,11 +38,19 @@ const inputValue = ref("");
 
 const store = useStore();
 
+// Fetch files (assuming you want to load them initially)
 // onMounted(async () => {
 //   await store.dispatch("file/loadFiles");
 // });
 
-const files = computed(() => store.getters["file/getFiles"](inputValue.value));
+const files = computed(() => store.getters["file/getFiles"]);
+
+const filteredFiles = computed(() => {
+  if (!inputValue.value) return files.value;
+  return files.value.filter(file =>
+    file.name.toLowerCase().includes(inputValue.value.toLowerCase())
+  );
+});
 
 const setSelectedFile = (selectedFile) =>
   store.commit("file/setSelectedFile", selectedFile);
@@ -51,6 +58,6 @@ const setSelectedFile = (selectedFile) =>
 const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
 </script>
 
-
 <style>
+/* Add your styles here */
 </style>

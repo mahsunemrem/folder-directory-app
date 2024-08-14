@@ -29,11 +29,19 @@
           <span class="float-end text-body-secondary">
             <small><i class="fa-solid fa-clock  "> {{ formatDate(comment.createDate )}}</i> </small>
           </span>
+         
         </div>
         <div class="card-body text-start">
           <blockquote class="blockquote mb-0">
             <p>{{ comment.content }}</p>
           </blockquote>
+          <span
+          class="delete-icon"
+          @click="deleteComment(comment.id)"
+          title="Yorumu sil"
+        >
+          <i class="fa-solid fa-times"></i>
+        </span>
         </div>
       </div>
     </div>
@@ -47,6 +55,7 @@
 import { useStore } from "vuex";
 import { computed, watch, ref } from "vue";
 import toast from '@/plugins/sweetalert';
+import moment from 'moment';
 
 const store = useStore();
 
@@ -89,13 +98,42 @@ const addComment = async () => {
   }
 };
 
-const formatDate = (dateString) => {
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-  return new Date(dateString).toLocaleDateString('tr-TR', options);
+const deleteComment = async (commentId) => {
+  try {
+    await store.dispatch('comment/deleteComment', commentId);
+    toast.success('Yorum başarıyla silindi.');
+  } catch (error) {
+    toast.error('Yorum silinirken bir hata oluştu.');
+  }
 };
+
+moment.locale('tr');
+
+const formatDate = (date) => {
+  return moment(date).format('DD MM YYYY, HH:mm ');
+};
+
+
+  
+  
 </script>
 
 <style scoped>
+.card-body {/* delete comment işareti için */
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+}
+
+.blockquote { /* delete comment işareti için */
+  margin: 0; 
+}
+
+.delete-icon { /* delete comment işareti için */
+  cursor: pointer;
+  color: #ff2600; 
+}
+
 .comment-form {
   margin-top: 20px;
   margin-bottom: 20px;

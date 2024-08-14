@@ -17,6 +17,9 @@ const comment = {
         state.commentsByFileId = [comment];
       }
     },
+    [types.DELETE_COMMENT](state, commentId) {
+      state.commentsByFileId = state.commentsByFileId.filter(comment => comment.id !== commentId);
+    }
   },
   actions: {
     async getCommentsByFileId({ commit }, fileId) {
@@ -29,6 +32,11 @@ const comment = {
 
       await dispatch('getCommentsByFileId', commentModel.fileId);
     },
+    async deleteComment({commit}, commentId)
+    {
+      await commentService.deleteComment(commentId);
+      commit(types.DELETE_COMMENT,commentId);
+    }
   },
   getters: {
     comments: (state) => state.commentsByFileId,

@@ -19,5 +19,11 @@ export default {
     } catch (error) {
       toast.error("Yorum Eklenemedi", error.message);
     }
+    
   },
+  async deleteComment(commentId)
+    {
+      const response = await axios.delete(`/comments/${commentId}`);
+      return response.data;
+    }
 };

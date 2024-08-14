@@ -17,11 +17,13 @@ const fileModule = {
     [types.ADD_FILE](state, file) { 
       state.filesByFolderId.push(file);
     },
+      [types.DELETE_FILE](state, fileId) {
+      state.filesByFolderId = state.filesByFolderId.filter(file => file.id !== fileId);
+    }
   },
   actions: {
     async getFilesByFolderId({ commit }, folderId) {
       var files = await fileService.getFilesByFolderId(folderId);
-
       commit(types.SET_FILES_BY_FOLDER_ID, files)
     },
     async getFileById({ commit }, fileId) {
@@ -31,13 +33,10 @@ const fileModule = {
     async addFile(_, fileModel) { // New action
       await fileService.addFile(fileModel);
     },
-    async fileDelete({ getters, dispatch }, fileId) {
+    async fileDelete({commit},fileId) {
       await fileService.fileDelete(fileId);
 
-      var selectedFolderId = getters["folder/getSelectedFolder"];
-      console.log(selectedFolderId)
-      // burada dosya silindikten sonra, seçili olan klasörün dosyalarını tekrardan çağır. yani getSelectedFolder getters'i ile seçili olan klasörün id'sini al ve yukarıdaki get filesbyFolderId actionuına göndererek o actionu tetikle. otomatik dosya listesi güncellenenecek. Çünkü arrayde senin sildiğin dosyayı kaldırmak kolay. Ancak aynı anda başka kullanıcı işlem yaptıysa bunu görmen lazım!
-      await dispatch('getFilesByFolderId', selectedFolderId)
+      commit(types.DELETE_FILE,fileId);
     }
   },
   getters: {
@@ -45,7 +44,6 @@ const fileModule = {
       if (!fileName) {
         return [];
       }
-
       return state.files.filter(x => x.name.includes(fileName));
     },
     getSelectedFile: (state) => state.selectedFile,
