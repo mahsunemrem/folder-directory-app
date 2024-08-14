@@ -8,10 +8,19 @@
         @click="setSelectedFile(file)"
         :class="{ active: selectedFile?.id == file.id }"
         type="button"
-        class="list-group-item list-group-item-action"
+        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
         aria-current="true"
       >
-        <i class="fa-solid fa-file-lines"></i> {{ file.name }}
+        <span>
+          <i class="fa-solid fa-file-lines"></i> {{ file.name }}
+        </span>
+        <span
+          class="delete-icon"
+          @click="fileDelete(file.id)" 
+          title="Dosyayı sil"
+        >
+          <i class="fa-solid fa-times"></i>
+        </span>
       </button>
     </ul>
   </div>
@@ -19,8 +28,7 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, watch  } from 'vue';
-
+import { computed, watch } from 'vue';
 
 const store = useStore();
 
@@ -33,11 +41,16 @@ watch(selectedFolder, async (newFolderId) => {
 
 const filteredFiles = computed(() => store.getters["file/getFilesByFolderId"]);
 
-const setSelectedFile = async (selectedFile) =>
-  await store.dispatch("file/getFileById", selectedFile.id);
+const setSelectedFile = async (selectedFile) => await store.dispatch("file/getFileById", selectedFile.id);
+
+
+const fileDelete = async (fileId) => {
+  console.log('Deleting file with ID:', fileId);
+  await store.dispatch("file/fileDelete", fileId);
+ 
+  console.log("File deleted:", fileId);
+}
 </script>
-
-
 
 <style>
 </style>
