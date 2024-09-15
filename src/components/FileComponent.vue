@@ -17,10 +17,12 @@
         <div class="col">
           <div class="mb-3">
             <label class="form-label">Folder</label>
+           
+
             <select class="form-select" v-model="folderId" required>
               <option v-for="folder in flattenedFolders" :key="folder.id" :value="folder.id">
                 {{ folder.name }}
-              </option>
+              </option> 
             </select>
             <p>Selected Folder ID: {{ folderId }}</p>
           </div>

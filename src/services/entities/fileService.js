@@ -14,8 +14,14 @@ export default {
   async getFilesByFolderId(folderId) {
     try {
       const response = await axios.get(`/folders/${folderId}/files`);
+      console.log("API response:", response.data);  // Log the API response
+      
+      if (response.data === null || response.data.length === 0) {
+        toast.info("Bu klasörde dosya bulunmamaktadır");
+      }
       return response.data;
     } catch (error) {
+      console.error("Error in getFilesByFolderId:", error);  // Log the error message
       toast.error("Bir Hata oluştu", error.message);
     }
   },

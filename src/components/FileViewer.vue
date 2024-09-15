@@ -1,43 +1,56 @@
 <template>
-  <div class="p-3" v-if="selectedFile != null">
-    <div class="d-flex justify-content-start">
-      <b><i class="fa-solid fa-house"></i> a/b/c/3</b>
-    </div>
-    <hr />
-    <div v-if="loading" class="d-flex justify-content-center p-5">
-      <div class="spinner-grow  text-danger" role="status">
-        <span class="visually-hidden">Loading...</span>
+  <div>   
+      <!-- Dosya yolunun gösterimi -->
+      <div v-if="filePath !== '/'" style="margin-top: 10px">
+        <input disabled :value="filePath" />
       </div>
-    </div>
-    <div v-else class="container">
-      <div v-html="selectedFile?.content">
 
+    <!-- File Details Section -->
+    <div v-if="selectedFile" class="p-3">
+      <div class="d-flex justify-content-start">
+        <b><i class="fa-solid fa-house"></i> {{ path }}/{{ selectedFile?.name }}</b>
       </div>
-      <hr>
-      <FileComment />
-    </div>    
+      <hr />
+      <div v-if="loading" class="d-flex justify-content-center p-5">
+        <div class="spinner-grow text-danger" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div v-else class="container">
+        <div v-html="selectedFile?.content"></div>
+        <hr>
+        <FileComment />
+      </div>    
+    </div>
   </div>
 </template>
 
 <script setup>
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
-import { ref, computed } from "vue";
 import FileComment from "@/components/FileComment.vue";
 
+// Initialize Vuex store
 const store = useStore();
 
+// Get folder path and selected file from Vuex store
+const path = computed(() => store.getters["folder/getPath"]);
 const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
-console.log("selectedFile.value")
-console.log(selectedFile.value);
 const loading = ref(false);
 
-// watch(selectedFile, () => {
-//   loading.value = true;
-//   setTimeout(() => {
-//     loading.value = false;
-//   }, 1000); // 1 saniye bekleme süresi
-// });
+// File name and path computations
+const fileName = ref("");
+const filePath = computed(() => {
+  if (!path.value || path.value === "") return "/";  // Eğer yol boşsa root "/" döner.
+  
+  const file = fileName.value ? fileName.value : "";  // Boş dosya adını kontrol et.
+  
+  // Dosya adı varsa tam dosya yolunu döndür, yoksa sadece klasör yolunu döndür.
+  return file ? `/${path.value}/${file}` : `/${path.value}/`;
+});
+
 </script>
 
 <style>
+/* Your custom styles here */
 </style>

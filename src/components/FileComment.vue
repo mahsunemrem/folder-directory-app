@@ -20,31 +20,67 @@
       <button @click="addComment" class="submit-button">Yorum Ekle</button>
     </div>
 
-    <div v-if="comments && comments.length > 0">
-      <div v-for="comment in comments" :key="comment.id" class="card d-flex my-3">
+    <div v-if="comments.length > 0">
+      <div
+        v-for="comment in displayedComments"
+        :key="comment.id"
+        class="card d-flex my-3"
+        @mouseenter="comment.showEmojis = true"
+        @mouseleave="comment.showEmojis = false"
+      >
         <div class="card-header">
           <span class="float-start">
             <b><i class="fa-solid fa-user"></i> {{ comment.authorName }}</b>
           </span>
           <span class="float-end text-body-secondary">
-            <small><i class="fa-solid fa-clock  "> {{ formatDate(comment.createDate )}}</i> </small>
+            <small><i class="fa-solid fa-clock"> {{ formatDate(comment.createDate) }}</i></small>
           </span>
-         
         </div>
+
         <div class="card-body text-start">
           <blockquote class="blockquote mb-0">
             <p>{{ comment.content }}</p>
           </blockquote>
+
+          <div v-if="comment.showEmojis" class="emoji-picker-container">
+            <span
+              v-for="emoji in emojiList"
+              :key="emoji"
+              class="emoji"
+              @click="addEmojiToComment(comment.id, emoji)"
+            >
+              {{ emoji }}
+            </span>
+          </div>
+
+          <div class="comment-reactions" v-if="comment.reactions.length > 0">
+            <span
+              v-for="reaction in comment.reactions.split('')"
+              :key="reaction"
+              class="reaction"
+            >
+              {{ reaction }}
+            </span>
+          </div>
+
           <span
-          class="delete-icon"
-          @click="deleteComment(comment.id)"
-          title="Yorumu sil"
-        >
-          <i class="fa-solid fa-times"></i>
-        </span>
+            class="delete-icon"
+            @click="deleteComment(comment.id)"
+            title="Yorumu sil"
+          >
+            <i class="fa-solid fa-times"></i>
+          </span>
         </div>
       </div>
+
+      <div v-if="comments.length < totalCommentsCount" class="text-center">
+  <button @click="loadMoreComments" class="load-more-button">
+    Daha fazla yorum yükle ({{ totalCommentsCount }})
+  </button>
+</div>
+
     </div>
+
     <div v-else>
       Henüz yorum yok.
     </div>
@@ -62,16 +98,51 @@ const store = useStore();
 const selectedFile = computed(() => store.getters["file/getSelectedFile"]);
 const selectedFileId = computed(() => selectedFile.value?.id);
 
+
+
+
+const displayedCommentsCount = ref(3);
+
 watch(selectedFileId, async (newFileId) => {
   if (newFileId) {
-    await store.dispatch("comment/getCommentsByFileId", newFileId);
+    try {
+      await store.dispatch("comment/getLimitedCommentsByFileId", {
+        fileId: newFileId,
+        limit: displayedCommentsCount.value,
+        offset: 0
+      });
+      await store.dispatch("comment/fetchTotalCommentsCount", newFileId);
+    } catch (error) {
+      console.error("Yorumlar yüklenirken bir hata oluştu:", error);
+    }
   }
 }, { immediate: true });
 
 const comments = computed(() => store.getters["comment/comments"]);
 const newCommentContent = ref("");
 const authorName = ref("");
-const fileId = ref(selectedFileId);
+
+const fileId = computed(() => selectedFileId.value);
+
+const totalCommentsCount = computed(() => store.getters['comment/totalCommentsCount']);
+
+const displayedComments = computed(() => {
+  return comments.value
+    .filter(comment => comment.fileId === fileId.value)
+    .slice(0, displayedCommentsCount.value);
+});
+const loadMoreComments = async () => {
+  displayedCommentsCount.value += 3;
+  try {
+    await store.dispatch("comment/getLimitedCommentsByFileId", {
+      fileId: fileId.value,
+      limit: displayedCommentsCount.value,
+      offset: 0
+    });
+  } catch (error) {
+    console.error('Yorumlar yüklenirken bir hata oluştu:', error);
+  }
+};
 
 const expandTextarea = (event) => {
   event.target.style.height = "150px";
@@ -83,16 +154,27 @@ const shrinkTextarea = (event) => {
 
 const addComment = async () => {
   if (newCommentContent.value.trim()) {
-    var commentModel = { 
+    if (!fileId.value) {
+      toast.error("Dosya seçilmedi.");
+      return;
+    }
+
+    const commentModel = { 
       content: newCommentContent.value, 
-      authorName: authorName.value , 
-      fileId:fileId.value 
+      authorName: authorName.value, 
+      fileId: fileId.value, 
+      reactions: ""
     };
 
-    await store.dispatch("comment/addComment", commentModel);
-    
-    newCommentContent.value = "";
-    authorName.value = "";
+    try {
+      await store.dispatch("comment/addComment", commentModel);
+      toast.success("Yorum başarıyla eklendi.");
+      newCommentContent.value = "";
+      authorName.value = "";
+      await store.dispatch("comment/getLimitedCommentsByFileId", { fileId: fileId.value, limit: displayedCommentsCount.value, offset: 0 });
+    } catch (error) {
+      toast.error("Yorum eklenirken bir hata oluştu.");
+    }
   } else {
     toast.error("Yorum alanı boş olamaz.");
   }
@@ -102,36 +184,51 @@ const deleteComment = async (commentId) => {
   try {
     await store.dispatch('comment/deleteComment', commentId);
     toast.success('Yorum başarıyla silindi.');
+    // Reload comments after deleting one
+    await store.dispatch("comment/getLimitedCommentsByFileId", { fileId: fileId.value, limit: displayedCommentsCount.value, offset: 0 });
   } catch (error) {
     toast.error('Yorum silinirken bir hata oluştu.');
   }
 };
 
-moment.locale('tr');
+const emojiList = ['😊', '😂', '❤️', '👍', '🎉'];
 
-const formatDate = (date) => {
-  return moment(date).format('DD MM YYYY, HH:mm ');
+const addEmojiToComment = async (commentId, emoji) => {
+  const comment = comments.value.find(c => c.id === commentId);
+  if (comment) {
+    const updatedReactions = comment.reactions ? `${comment.reactions}${emoji}` : emoji;
+
+    try {
+      await store.dispatch('comment/updateCommentReactions', { commentId, reactions: updatedReactions });
+    } catch (error) {
+      console.error('Emoji güncellenirken bir hata oluştu:', error);
+    }
+  }
 };
 
 
-  
-  
+
+const formatDate = (date) => {
+  return moment(date).format('DD MM YYYY, HH:mm');
+};
 </script>
 
+
+
 <style scoped>
-.card-body {/* delete comment işareti için */
+.card-body {
   display: flex;
-  justify-content: space-between; 
-  align-items: center; 
+  justify-content: space-between;
+  align-items: center;
 }
 
-.blockquote { /* delete comment işareti için */
-  margin: 0; 
+.blockquote {
+  margin: 0;
 }
 
-.delete-icon { /* delete comment işareti için */
+.delete-icon {
   cursor: pointer;
-  color: #ff2600; 
+  color: #ff2600;
 }
 
 .comment-form {
@@ -146,31 +243,47 @@ const formatDate = (date) => {
   margin-bottom: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-}
-
-.form-input:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.comment-content {
-  min-height: 50px;
-  resize: none;
 }
 
 .submit-button {
+  padding: 10px 15px;
   background-color: #007bff;
-  color: white;
+  color: #fff;
   border: none;
-  padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .submit-button:hover {
+  background-color: #0056b3;
+}
+
+.emoji-picker-container {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.emoji {
+  cursor: pointer;
+}
+
+.reaction {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.load-more-button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.load-more-button:hover {
   background-color: #0056b3;
 }
 </style>
